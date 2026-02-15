@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 using Mirror;
 
 public class GameUI : MonoBehaviour
@@ -55,7 +56,8 @@ public class GameUI : MonoBehaviour
                 $"You: {you}";
         }
 
-        if (Input.GetMouseButtonDown(0))
+        var mouse = Mouse.current;
+        if (mouse != null && mouse.leftButton.wasPressedThisFrame)
         {
             TryClickNode();
         }
@@ -63,8 +65,9 @@ public class GameUI : MonoBehaviour
 
     void TryClickNode()
     {
+        var mouse = Mouse.current;
         if (Camera.main == null) return;
-        var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        var ray = Camera.main.ScreenPointToRay(mouse.position.ReadValue());
         if (!Physics.Raycast(ray, out var hit, 1000f)) return;
 
         var node = hit.collider.GetComponentInParent<BoardNode>();
