@@ -51,5 +51,11 @@ public class LobbyPlayer : NetworkBehaviour
         GameManager.Instance?.RequestMoveShip(netId, toNodeId);
     }
 
+    [Command]
+    public void CmdRequestPlaceColony(int nodeId)
+    {
+        GameManager.Instance?.RequestPlaceColony(netId, nodeId);
+    }
+
 }
 

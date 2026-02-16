@@ -59,15 +59,14 @@ public class GameUI : MonoBehaviour
         var mouse = Mouse.current;
         if (mouse != null && mouse.leftButton.wasPressedThisFrame)
         {
-            TryClickNode();
+            TryClickNode(mouse.position.ReadValue());
         }
     }
 
-    void TryClickNode()
+    void TryClickNode(Vector2 screenPos)
     {
-        var mouse = Mouse.current;
         if (Camera.main == null) return;
-        var ray = Camera.main.ScreenPointToRay(mouse.position.ReadValue());
+        var ray = Camera.main.ScreenPointToRay(screenPos);
         if (!Physics.Raycast(ray, out var hit, 1000f)) return;
 
         var node = hit.collider.GetComponentInParent<BoardNode>();
@@ -95,10 +94,15 @@ public class GameUI : MonoBehaviour
                 lp.CmdRequestPlaceShip(a, b);
             }
         }
-        else if (gm.phase == MatchPhase.Turn && you == gm.CurrentPlayerNetId)
+        else if (gm.phase == MatchPhase.Setup && you == gm.CurrentSetupPlayerNetId)
         {
-            lp.CmdRequestMoveShip(node.nodeId);
+            if (gm.setupRound == SetupRound.Colony1 || gm.setupRound == SetupRound.Colony2)
+            {
+                lp.CmdRequestPlaceColony(node.nodeId);
+                return;
+            }
         }
+
     }
 
     void OnConfirmSetup()
@@ -117,4 +121,5 @@ public class GameUI : MonoBehaviour
         if (localLP == null) return;
         localLP.CmdRequestEndTurn();
     }
+
 }

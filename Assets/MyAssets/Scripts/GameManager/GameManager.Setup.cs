@@ -7,6 +7,8 @@ public partial class GameManager
 {
     [SyncVar] public SetupRound setupRound = SetupRound.Colony1;
     [SyncVar] public int setupIndex = 0;
+    public readonly SyncList<int> colony1NodeBySeat = new(); // -1 = not placed
+    public readonly SyncList<int> colony2NodeBySeat = new();
 
     [Server]
     void ServerBeginSetup()
@@ -58,6 +60,21 @@ public partial class GameManager
             };
         }
         
+        // validate completion BEFORE advancing state
+        if (setupRound == SetupRound.Colony1 || setupRound == SetupRound.Colony2)
+        {
+            EnsureColonyListsSized();
+            int seat = SeatIndexOf(requesterNetId);
+            if (seat < 0) return;
+
+            int placed = (setupRound == SetupRound.Colony1) ? colony1NodeBySeat[seat] : colony2NodeBySeat[seat];
+            if (placed < 0)
+            {
+                Debug.Log("[Server] Reject: must place colony before confirming");
+                return;
+            }
+        }
+
         if (setupRound == SetupRound.SpaceportAndShip)
         {
             EnsureShipListSized();
@@ -80,5 +97,42 @@ public partial class GameManager
             Debug.Log($"[Server] Setup advanced. Round={setupRound} CurrentSetup={CurrentSetupPlayerNetId}");
         }
     }
+
+    [Server]
+    void EnsureColonyListsSized()
+    {
+        while (colony1NodeBySeat.Count < seatNetIds.Count) colony1NodeBySeat.Add(-1);
+        while (colony2NodeBySeat.Count < seatNetIds.Count) colony2NodeBySeat.Add(-1);
+    }
+
+    [Server]
+    public void RequestPlaceColony(uint requesterNetId, int nodeId)
+    {
+        if (phase != MatchPhase.Setup) return;
+        if (requesterNetId != CurrentSetupPlayerNetId) return;
+        if (setupRound != SetupRound.Colony1 && setupRound != SetupRound.Colony2) return;
+
+        if (BoardRegistry.Instance == null) { Debug.LogError("No BoardRegistry"); return; }
+        if (!BoardRegistry.Instance.Nodes.ContainsKey(nodeId)) return;
+
+        EnsureColonyListsSized();
+        int seat = SeatIndexOf(requesterNetId);
+        if (seat < 0) return;
+
+        // prevent duplicate occupation
+        for (int i = 0; i < seatNetIds.Count; i++)
+        {
+            if (colony1NodeBySeat[i] == nodeId || colony2NodeBySeat[i] == nodeId)
+                return;
+        }
+
+        if (setupRound == SetupRound.Colony1)
+            colony1NodeBySeat[seat] = nodeId;
+        else
+            colony2NodeBySeat[seat] = nodeId;
+
+        Debug.Log($"[Server] Colony placed. seat={seat} node={nodeId} round={setupRound}");
+    }
+
 
 }
