@@ -45,22 +45,7 @@ public partial class GameManager
         if (requesterNetId != CurrentSetupPlayerNetId) { Debug.Log("[Server] Reject: not your setup turn"); return; }
 
         int n = seatNetIds.Count;
-        setupIndex++;
 
-        if (setupIndex >= n)
-        {
-            setupIndex = 0;
-            setupRound = setupRound switch
-            {
-                SetupRound.Colony1 => SetupRound.Colony2,
-                SetupRound.Colony2 => SetupRound.SpaceportAndShip,
-                SetupRound.SpaceportAndShip => SetupRound.FreeUpgrade,
-                SetupRound.FreeUpgrade => SetupRound.Done,
-                _ => setupRound
-            };
-        }
-        
-        // validate completion BEFORE advancing state
         if (setupRound == SetupRound.Colony1 || setupRound == SetupRound.Colony2)
         {
             EnsureColonyListsSized();
@@ -73,6 +58,20 @@ public partial class GameManager
                 Debug.Log("[Server] Reject: must place colony before confirming");
                 return;
             }
+        }
+
+        setupIndex++;
+        if (setupIndex >= n)
+        {
+            setupIndex = 0;
+            setupRound = setupRound switch
+            {
+                SetupRound.Colony1 => SetupRound.Colony2,
+                SetupRound.Colony2 => SetupRound.SpaceportAndShip,
+                SetupRound.SpaceportAndShip => SetupRound.FreeUpgrade,
+                SetupRound.FreeUpgrade => SetupRound.Done,
+                _ => setupRound
+            };
         }
 
         if (setupRound == SetupRound.SpaceportAndShip)
