@@ -107,22 +107,32 @@ public partial class GameManager
     [Server]
     public void RequestPlaceColony(uint requesterNetId, int nodeId)
     {
-        if (phase != MatchPhase.Setup) return;
-        if (requesterNetId != CurrentSetupPlayerNetId) return;
-        if (setupRound != SetupRound.Colony1 && setupRound != SetupRound.Colony2) return;
+        Debug.Log($"[Server] RequestPlaceColony from netId={requesterNetId} node={nodeId} phase={phase} setupRound={setupRound} currentSetup={CurrentSetupPlayerNetId}");
+
+        if (phase != MatchPhase.Setup)
+        { Debug.Log("[Server] Reject: not in Setup phase"); return; }
+
+        if (requesterNetId != CurrentSetupPlayerNetId)
+        { Debug.Log("[Server] Reject: not your setup turn"); return; }
+
+        if (setupRound != SetupRound.Colony1 && setupRound != SetupRound.Colony2)
+        { Debug.Log("[Server] Reject: not colony placement round"); return; }
 
         if (BoardRegistry.Instance == null) { Debug.LogError("No BoardRegistry"); return; }
-        if (!BoardRegistry.Instance.Nodes.ContainsKey(nodeId)) return;
+        if (!BoardRegistry.Instance.Nodes.ContainsKey(nodeId)) { Debug.LogError("Invalid node ID"); return; }
 
         EnsureColonyListsSized();
         int seat = SeatIndexOf(requesterNetId);
-        if (seat < 0) return;
+        if (seat < 0) { Debug.Log("[Server] Reject: invalid seat index"); return; }
 
         // prevent duplicate occupation
         for (int i = 0; i < seatNetIds.Count; i++)
         {
             if (colony1NodeBySeat[i] == nodeId || colony2NodeBySeat[i] == nodeId)
+            { 
+                Debug.Log("[Server] Reject: node already occupied by a colony");
                 return;
+            }
         }
 
         if (setupRound == SetupRound.Colony1)

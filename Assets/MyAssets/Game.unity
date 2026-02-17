@@ -534,50 +534,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3737554676630784414, guid: 49c7e9ac4a650e9468f5f4f24396c6d5, type: 3}
   m_PrefabInstance: {fileID: 569171381}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &569459909
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 569459911}
-  - component: {fileID: 569459910}
-  m_Layer: 0
-  m_Name: GameObject
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &569459910
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 569459909}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cb2ae6d1598eefd40a5cdc71af871bb7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PhysxSanity
---- !u!4 &569459911
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 569459909}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.29758, y: 3.84479, z: 0.47651}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &577263344
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -714,17 +670,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7205128499193657079, guid: 5b0abc0fb5d6cdf47b2b4d3492f06f63, type: 3}
   m_PrefabInstance: {fileID: 632109860}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &632109862 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5966511957144879, guid: 5b0abc0fb5d6cdf47b2b4d3492f06f63, type: 3}
-  m_PrefabInstance: {fileID: 632109860}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 548a6044707fe3b418621896ef78e34d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::BoardNode
 --- !u!1 &688965119
 GameObject:
   m_ObjectHideFlags: 0
@@ -735,7 +680,6 @@ GameObject:
   m_Component:
   - component: {fileID: 688965121}
   - component: {fileID: 688965120}
-  - component: {fileID: 688965122}
   m_Layer: 0
   m_Name: BoardRoot
   m_TagString: Untagged
@@ -782,20 +726,6 @@ Transform:
   - {fileID: 359095582}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &688965122
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 688965119}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 25049b2ad144c894ebc6a5df7e024038, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PhysicsProbe
-  targetNode: {fileID: 632109862}
-  radius: 0.5
 --- !u!1001 &1099694573
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1292,4 +1222,3 @@ SceneRoots:
   - {fileID: 688965121}
   - {fileID: 8314508138466180614}
   - {fileID: 45663079}
-  - {fileID: 569459911}

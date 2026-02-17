@@ -20,6 +20,12 @@ public class BoardRegistry : MonoBehaviour
 
     // ------------ Unity lifecycle ------------
 
+    void Start()
+    {
+        var s = gameObject.scene;
+        Debug.Log($"[BoardRegistry] START scene={s.name} loaded={s.isLoaded} physValid={physicsScene.IsValid()} Nodes={Nodes.Count} Lanes={Lanes.Count}");
+    }
+
     void Awake()
     {
         if (Instance != null && Instance != this)
