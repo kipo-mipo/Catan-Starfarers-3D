@@ -8,11 +8,6 @@ public class LobbyPlayer : NetworkBehaviour
 
     public event System.Action<bool> ReadyChanged;
 
-    public override void OnStartLocalPlayer()
-    {
-        // Optional: reset local state UI-side
-    }
-
     [Command]
     public void CmdSetReady(bool ready)
     {
@@ -23,39 +18,55 @@ public class LobbyPlayer : NetworkBehaviour
     [Command]
     public void CmdConfirmSetup()
     {
-        Debug.Log($"[Server] CmdConfirmSetup from netId={netId} phase={(GameManager.Instance ? GameManager.Instance.phase.ToString() : "NO_GM")}");
-        GameManager.Instance?.ConfirmSetupAction(netId);
+        if (GameManager.Instance == null) return;
+
+        uint senderNetId = connectionToClient.identity.netId;
+        Debug.Log($"[Server] CmdConfirmSetup from senderNetId={senderNetId}");
+        GameManager.Instance.ConfirmSetupAction(senderNetId);
     }
 
     [Command]
     public void CmdRequestEndTurn()
     {
         if (GameManager.Instance == null) return;
-        GameManager.Instance.RequestEndTurn(netId);
+
+        uint senderNetId = connectionToClient.identity.netId;
+        Debug.Log($"[Server] CmdRequestEndTurn from senderNetId={senderNetId}");
+        GameManager.Instance.RequestEndTurn(senderNetId);
+    }
+
+    [Command]
+    public void CmdRequestPlaceShip(int a, int b)
+    {
+        if (GameManager.Instance == null) return;
+
+        uint senderNetId = connectionToClient.identity.netId;
+        Debug.Log($"[Server] CmdRequestPlaceShip from senderNetId={senderNetId} a={a} b={b}");
+        GameManager.Instance.RequestPlaceShip(senderNetId, a, b);
+    }
+
+    [Command]
+    public void CmdRequestMoveShip(int toNodeId)
+    {
+        if (GameManager.Instance == null) return;
+
+        uint senderNetId = connectionToClient.identity.netId;
+        Debug.Log($"[Server] CmdRequestMoveShip from senderNetId={senderNetId} toNodeId={toNodeId}");
+        GameManager.Instance.RequestMoveShip(senderNetId, toNodeId);
+    }
+
+    [Command]
+    public void CmdRequestPlaceColony(int nodeId)
+    {
+        if (GameManager.Instance == null) return;
+
+        uint senderNetId = connectionToClient.identity.netId;
+        Debug.Log($"[Server] CmdRequestPlaceColony from senderNetId={senderNetId} nodeId={nodeId}");
+        GameManager.Instance.RequestPlaceColony(senderNetId, nodeId);
     }
 
     void OnReadyChanged(bool _, bool newValue)
     {
         ReadyChanged?.Invoke(newValue);
     }
-
-    [Command]
-    public void CmdRequestPlaceShip(int nodeAId, int nodeBId)
-    {
-        GameManager.Instance?.RequestPlaceShip(netId, nodeAId, nodeBId);
-    }
-
-    [Command]
-    public void CmdRequestMoveShip(int toNodeId)
-    {
-        GameManager.Instance?.RequestMoveShip(netId, toNodeId);
-    }
-
-    [Command]
-    public void CmdRequestPlaceColony(int nodeId)
-    {
-        GameManager.Instance?.RequestPlaceColony(netId, nodeId);
-    }
-
 }
-

@@ -1,20 +1,34 @@
 using Mirror;
 using UnityEngine;
 
-public enum SetupRound { Colony1, Colony2, SpaceportAndShip, FreeUpgrade, Done }
+public enum SetupRound
+{
+    Colony1,
+    Colony2,
+    SpaceportAndShip,
+    FreeUpgrade,
+    Done
+}
 
 public partial class GameManager
 {
     [SyncVar] public SetupRound setupRound = SetupRound.Colony1;
     [SyncVar] public int setupIndex = 0;
-    public readonly SyncList<int> colony1NodeBySeat = new(); // -1 = not placed
-    public readonly SyncList<int> colony2NodeBySeat = new();
+
+    // -1 = not placed
+    public readonly SyncList<int> colony1NodeBySeat = new SyncList<int>();
+    public readonly SyncList<int> colony2NodeBySeat = new SyncList<int>();
 
     [Server]
     void ServerBeginSetup()
     {
         setupRound = SetupRound.Colony1;
         setupIndex = 0;
+
+        EnsureColonyListsSized();
+        EnsureShipListSized(); // exists in Ships partial
+
+        Debug.Log($"[Server] Setup begin. Round={setupRound} CurrentSetup={CurrentSetupPlayerNetId}");
     }
 
     public uint CurrentSetupPlayerNetId
@@ -24,10 +38,13 @@ public partial class GameManager
             int n = seatNetIds.Count;
             if (n == 0) return 0;
 
+            // Colony1 + Spaceport go clockwise, Colony2 + FreeUpgrade go counterclockwise (for now)
             bool clockwise = (setupRound == SetupRound.Colony1 || setupRound == SetupRound.SpaceportAndShip);
+
             int idx = setupIndex % n;
 
-            if (clockwise) return seatNetIds[idx];
+            if (clockwise)
+                return seatNetIds[idx];
 
             // counterclockwise
             int ccw = (n - 1 - idx + n) % n;
@@ -38,29 +55,75 @@ public partial class GameManager
     [Server]
     public void ConfirmSetupAction(uint requesterNetId)
     {
+        Debug.Log($"[Server] ConfirmSetupAction: phase={phase} round={setupRound} setupIndex={setupIndex} requester={requesterNetId} current={CurrentSetupPlayerNetId}");
 
-        Debug.Log($"[Server] ConfirmSetupAction called. phase={phase} round={setupRound} setupIndex={setupIndex} requester={requesterNetId} currentSetup={CurrentSetupPlayerNetId}");
-
-        if (phase != MatchPhase.Setup) { Debug.Log("[Server] Reject: not in Setup"); return; }
-        if (requesterNetId != CurrentSetupPlayerNetId) { Debug.Log("[Server] Reject: not your setup turn"); return; }
-
-        int n = seatNetIds.Count;
-
-        if (setupRound == SetupRound.Colony1 || setupRound == SetupRound.Colony2)
+        if (phase != MatchPhase.Setup)
         {
-            EnsureColonyListsSized();
-            int seat = SeatIndexOf(requesterNetId);
-            if (seat < 0) return;
-
-            int placed = (setupRound == SetupRound.Colony1) ? colony1NodeBySeat[seat] : colony2NodeBySeat[seat];
-            if (placed < 0)
-            {
-                Debug.Log("[Server] Reject: must place colony before confirming");
-                return;
-            }
+            Debug.Log("[Server] Reject: not in Setup");
+            return;
         }
 
+        if (requesterNetId != CurrentSetupPlayerNetId)
+        {
+            Debug.Log("[Server] Reject: not your setup turn");
+            return;
+        }
+
+        EnsureColonyListsSized();
+        EnsureShipListSized();
+
+        int seat = SeatIndexOf(requesterNetId); // MUST exist exactly once in project
+        if (seat < 0)
+        {
+            Debug.Log("[Server] Reject: requester not in seats");
+            return;
+        }
+
+        // 1) Validate required action for CURRENT round BEFORE advancing anything
+        switch (setupRound)
+        {
+            case SetupRound.Colony1:
+            {
+                if (colony1NodeBySeat[seat] < 0)
+                {
+                    Debug.Log("[Server] Reject: must place Colony1 before confirming");
+                    return;
+                }
+                break;
+            }
+            case SetupRound.Colony2:
+            {
+                if (colony2NodeBySeat[seat] < 0)
+                {
+                    Debug.Log("[Server] Reject: must place Colony2 before confirming");
+                    return;
+                }
+                break;
+            }
+            case SetupRound.SpaceportAndShip:
+            {
+                if (shipNetIdsBySeat.Count <= seat || shipNetIdsBySeat[seat] == 0u)
+                {
+                    Debug.Log("[Server] Reject: must place ship before confirming");
+                    return;
+                }
+                break;
+            }
+            case SetupRound.FreeUpgrade:
+            {
+                // you can add validation later; for now allow confirm
+                break;
+            }
+            case SetupRound.Done:
+                // already done; ignore
+                return;
+        }
+
+        // 2) Advance turn order inside the current setup round
+        int n = seatNetIds.Count;
         setupIndex++;
+
+        // if we’ve completed a full pass for this round, move to next round and reset index
         if (setupIndex >= n)
         {
             setupIndex = 0;
@@ -74,26 +137,15 @@ public partial class GameManager
             };
         }
 
-        if (setupRound == SetupRound.SpaceportAndShip)
-        {
-            EnsureShipListSized();
-            int seat = SeatIndexOf(requesterNetId);
-            if (seat < 0 || shipNetIdsBySeat[seat] == 0u)
-            {
-                Debug.Log("[Server] Reject: must place ship before confirming");
-                return;
-            }
-        }
-
         if (setupRound == SetupRound.Done)
         {
             phase = MatchPhase.Turn;
             turnIndex = 0;
-            Debug.Log($"[Server] Setup complete. Phase=Turn Current={CurrentPlayerNetId}");
+            Debug.Log($"[Server] Setup complete -> Phase=Turn CurrentPlayer={CurrentPlayerNetId}");
         }
         else
         {
-            Debug.Log($"[Server] Setup advanced. Round={setupRound} CurrentSetup={CurrentSetupPlayerNetId}");
+            Debug.Log($"[Server] Setup advanced -> Round={setupRound} setupIndex={setupIndex} CurrentSetup={CurrentSetupPlayerNetId}");
         }
     }
 
@@ -107,29 +159,46 @@ public partial class GameManager
     [Server]
     public void RequestPlaceColony(uint requesterNetId, int nodeId)
     {
-        Debug.Log($"[Server] RequestPlaceColony from netId={requesterNetId} node={nodeId} phase={phase} setupRound={setupRound} currentSetup={CurrentSetupPlayerNetId}");
+        Debug.Log($"[Server] RequestPlaceColony from={requesterNetId} node={nodeId} phase={phase} round={setupRound} currentSetup={CurrentSetupPlayerNetId}");
 
-        if (phase != MatchPhase.Setup)
-        { Debug.Log("[Server] Reject: not in Setup phase"); return; }
+        if (phase != MatchPhase.Setup) return;
+        if (requesterNetId != CurrentSetupPlayerNetId) return;
+        if (setupRound != SetupRound.Colony1 && setupRound != SetupRound.Colony2) return;
 
-        if (requesterNetId != CurrentSetupPlayerNetId)
-        { Debug.Log("[Server] Reject: not your setup turn"); return; }
+        if (BoardRegistry.Instance == null)
+        {
+            Debug.LogError("[Server] No BoardRegistry in scene");
+            return;
+        }
 
-        if (setupRound != SetupRound.Colony1 && setupRound != SetupRound.Colony2)
-        { Debug.Log("[Server] Reject: not colony placement round"); return; }
-
-        if (BoardRegistry.Instance == null) { Debug.LogError("No BoardRegistry"); return; }
-        if (!BoardRegistry.Instance.Nodes.ContainsKey(nodeId)) { Debug.LogError("Invalid node ID"); return; }
+        if (!BoardRegistry.Instance.Nodes.ContainsKey(nodeId))
+        {
+            Debug.Log("[Server] Reject: invalid node id");
+            return;
+        }
 
         EnsureColonyListsSized();
-        int seat = SeatIndexOf(requesterNetId);
-        if (seat < 0) { Debug.Log("[Server] Reject: invalid seat index"); return; }
 
-        // prevent duplicate occupation
+        int seat = SeatIndexOf(requesterNetId); // MUST exist exactly once in project
+        if (seat < 0) return;
+
+        // Do NOT allow placing multiple times for the same round.
+        if (setupRound == SetupRound.Colony1 && colony1NodeBySeat[seat] >= 0)
+        {
+            Debug.Log("[Server] Reject: Colony1 already placed for this seat");
+            return;
+        }
+        if (setupRound == SetupRound.Colony2 && colony2NodeBySeat[seat] >= 0)
+        {
+            Debug.Log("[Server] Reject: Colony2 already placed for this seat");
+            return;
+        }
+
+        // Prevent any colony occupying the same node
         for (int i = 0; i < seatNetIds.Count; i++)
         {
             if (colony1NodeBySeat[i] == nodeId || colony2NodeBySeat[i] == nodeId)
-            { 
+            {
                 Debug.Log("[Server] Reject: node already occupied by a colony");
                 return;
             }
@@ -142,6 +211,4 @@ public partial class GameManager
 
         Debug.Log($"[Server] Colony placed. seat={seat} node={nodeId} round={setupRound}");
     }
-
-
 }

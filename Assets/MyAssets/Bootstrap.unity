@@ -1527,11 +1527,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameUI
   boardCamera: {fileID: 1236243939070452257, guid: 607145be9c62fc34da51aa071269723f, type: 3}
-  nodeMask:
-    serializedVersion: 2
-    m_Bits: 64
-  debugClicks: 1
+  confirmSetupButton: {fileID: 962883972}
+  endTurnButton: {fileID: 1127475997}
   rayDistance: 100000
+  blockClicksOverUI: 0
+  logClicks: 0
+  drawDebugRay: 0
+  logButtonPresses: 1
 --- !u!1 &884851387
 GameObject:
   m_ObjectHideFlags: 0

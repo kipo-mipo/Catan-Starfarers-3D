@@ -2,11 +2,16 @@ using Mirror;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class GameUI : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Camera boardCamera;
+
+    [Header("UI Buttons (assign in Inspector)")]
+    [SerializeField] private Button confirmSetupButton;
+    [SerializeField] private Button endTurnButton;
 
     [Header("Raycast")]
     [SerializeField] private float rayDistance = 100000f;
@@ -18,40 +23,133 @@ public class GameUI : MonoBehaviour
     [Header("Debug")]
     [SerializeField] private bool logClicks = false;
     [SerializeField] private bool drawDebugRay = false;
+    [SerializeField] private bool logButtonPresses = true;
 
     private int? selectedNodeA = null;
 
     void Awake()
     {
-        // Don’t touch BoardRegistry here. It may not be initialized yet depending on execution order.
         if (boardCamera == null) boardCamera = Camera.main;
+    }
+
+    void Start()
+    {
+        // Wire button listeners so you don't rely on inspector event hookups.
+        if (confirmSetupButton != null)
+        {
+            confirmSetupButton.onClick.RemoveListener(OnConfirmSetupClicked);
+            confirmSetupButton.onClick.AddListener(OnConfirmSetupClicked);
+        }
+
+        if (endTurnButton != null)
+        {
+            endTurnButton.onClick.RemoveListener(OnEndTurnClicked);
+            endTurnButton.onClick.AddListener(OnEndTurnClicked);
+        }
     }
 
     void Update()
     {
         // Require local player
-        if (!NetworkClient.active || NetworkClient.localPlayer == null) return;
+        if (!NetworkClient.active || NetworkClient.localPlayer == null)
+        {
+            UpdateButtonInteractable(null, null);
+            return;
+        }
 
-        // Require input
+        var gm = GameManager.Instance;
+        var lp = GetLocalLobbyPlayer();
+
+        UpdateButtonInteractable(gm, lp);
+
+        // Require mouse
         var mouse = Mouse.current;
         if (mouse == null) return;
 
-        // Require registry (lazy)
+        // Require registry
         var registry = BoardRegistry.Instance;
         if (registry == null) return;
 
-        // Require camera (lazy)
+        // Require camera
         if (boardCamera == null) boardCamera = Camera.main;
         if (boardCamera == null) return;
 
         if (mouse.leftButton.wasPressedThisFrame)
         {
-            TryClickNode(mouse.position.ReadValue(), registry);
+            TryClickNode(mouse.position.ReadValue(), registry, gm, lp);
         }
     }
 
-    private void TryClickNode(Vector2 screenPos, BoardRegistry registry)
+    private LobbyPlayer GetLocalLobbyPlayer()
     {
+        if (NetworkClient.localPlayer == null) return null;
+        return NetworkClient.localPlayer.GetComponent<LobbyPlayer>();
+    }
+
+    private void UpdateButtonInteractable(GameManager gm, LobbyPlayer lp)
+    {
+        // Default: disabled if not ready
+        bool canConfirm = false;
+        bool canEndTurn = false;
+
+        if (gm != null && lp != null && NetworkClient.localPlayer != null)
+        {
+            uint you = NetworkClient.localPlayer.netId;
+
+            if (gm.phase == MatchPhase.Setup)
+            {
+                // Let only current setup player confirm
+                canConfirm = (you == gm.CurrentSetupPlayerNetId);
+                canEndTurn = false;
+            }
+            else if (gm.phase == MatchPhase.Turn)
+            {
+                canConfirm = false;
+                canEndTurn = (you == gm.CurrentPlayerNetId);
+            }
+        }
+
+        if (confirmSetupButton != null) confirmSetupButton.interactable = canConfirm;
+        if (endTurnButton != null) endTurnButton.interactable = canEndTurn;
+    }
+
+    // ---------- BUTTON HANDLERS ----------
+    public void OnConfirmSetupClicked()
+    {
+        var lp = GetLocalLobbyPlayer();
+        if (lp == null)
+        {
+            Debug.LogError("[GameUI] Confirm clicked but local LobbyPlayer is missing.");
+            return;
+        }
+
+        if (logButtonPresses)
+            Debug.Log("[GameUI] ConfirmSetup button pressed -> CmdConfirmSetup()");
+
+        lp.CmdConfirmSetup();
+    }
+
+    public void OnEndTurnClicked()
+    {
+        var lp = GetLocalLobbyPlayer();
+        if (lp == null)
+        {
+            Debug.LogError("[GameUI] EndTurn clicked but local LobbyPlayer is missing.");
+            return;
+        }
+
+        if (logButtonPresses)
+            Debug.Log("[GameUI] EndTurn button pressed -> CmdRequestEndTurn()");
+
+        lp.CmdRequestEndTurn();
+    }
+
+    // ---------- BOARD CLICKING ----------
+    private void TryClickNode(Vector2 screenPos, BoardRegistry registry, GameManager gm, LobbyPlayer lp)
+    {
+        if (lp == null) return;
+        if (gm == null) return;
+
         if (blockClicksOverUI && EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
             return;
 
@@ -60,9 +158,8 @@ public class GameUI : MonoBehaviour
         if (drawDebugRay)
             Debug.DrawRay(ray.origin, ray.direction * 5000f, Color.green, 0.25f);
 
-        // IMPORTANT: use the board scene's physics scene (fixes Mirror / multi-scene mismatch)
+        // Use board scene physics scene
         var ps = registry.physicsScene;
-
         if (!ps.IsValid())
         {
             if (logClicks) Debug.Log("[GameUI] Board physicsScene invalid (yet).");
@@ -84,38 +181,23 @@ public class GameUI : MonoBehaviour
 
         if (logClicks) Debug.Log($"[GameUI] Hit nodeId={node.nodeId}");
 
-        // Get game + local player component that owns commands
-        var gm = GameManager.Instance;
-        if (gm == null) return;
-
-        var localIdentity = NetworkClient.localPlayer;
-        var lp = localIdentity.GetComponent<LobbyPlayer>();
-        if (lp == null)
-        {
-            Debug.LogError("[GameUI] Local player missing LobbyPlayer component.");
-            return;
-        }
-
-        uint you = localIdentity.netId;
+        uint you = NetworkClient.localPlayer.netId;
 
         // ----- SETUP PHASE -----
         if (gm.phase == MatchPhase.Setup)
         {
-            // Not your turn in setup
             if (you != gm.CurrentSetupPlayerNetId)
             {
                 if (logClicks) Debug.Log("[GameUI] Ignored: not your setup turn.");
                 return;
             }
 
-            // Colony placement: single click
             if (gm.setupRound == SetupRound.Colony1 || gm.setupRound == SetupRound.Colony2)
             {
                 lp.CmdRequestPlaceColony(node.nodeId);
                 return;
             }
 
-            // Ship placement: two endpoints
             if (gm.setupRound == SetupRound.SpaceportAndShip)
             {
                 if (selectedNodeA == null)
