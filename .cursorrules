@@ -1,0 +1,18 @@
+---
+description: 
+alwaysApply: true
+---
+
+Docs are source of truth: Docs/GameDesign.md + Docs/TechDesign.md.
+
+No Unity types in GameCore.
+
+Server authoritative: clients send intent, server validates, no client-side state authority.
+
+Small diffs: don’t refactor unrelated stuff.
+
+Ask before adding dependencies.
+
+No “magic” singletons unless already existing.
+
+Performance: no allocations in Update, no Find()/GetComponent() loops, pool objects.
