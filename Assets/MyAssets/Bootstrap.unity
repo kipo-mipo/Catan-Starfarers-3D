@@ -132,7 +132,6 @@ GameObject:
   - component: {fileID: 1498868}
   - component: {fileID: 1498867}
   - component: {fileID: 1498871}
-  - component: {fileID: 1498872}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -234,29 +233,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1498866}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: be6a50cc5393e2b4fbc4dedb34e26ac2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LobbyUI
-  connectionPanel: {fileID: 1561739631}
-  lobbyPanel: {fileID: 1209861804}
-  addressInput: {fileID: 622825121}
-  hostButton: {fileID: 338414339}
-  joinButton: {fileID: 168386904}
-  stopButton: {fileID: 595344102}
-  statusText: {fileID: 2062052422}
-  readyButton: {fileID: 250039903}
-  readyButtonText: {fileID: 2077928516}
-  startButton: {fileID: 1842203331}
---- !u!114 &1498872
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1498866}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: da08d212c8acfe249b40ea297701511e, type: 3}
+  m_Script: {fileID: 11500000, guid: 9eee2b25a5783854682071ed6621634f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::UIRouter
   connectionPanel: {fileID: 1561739631}
@@ -1523,13 +1500,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 852049223}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea0d9a23ad410a84db49cdb9f921c8bd, type: 3}
+  m_Script: {fileID: 11500000, guid: 7d5438f381342ee40b084e17ad3d32c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameUI
   boardCamera: {fileID: 1236243939070452257, guid: 607145be9c62fc34da51aa071269723f, type: 3}
   confirmSetupButton: {fileID: 962883972}
   endTurnButton: {fileID: 1127475997}
-  rayDistance: 100000
+  rayDistance: 1000
   blockClicksOverUI: 0
   logClicks: 0
   drawDebugRay: 0
@@ -1924,6 +1901,7 @@ GameObject:
   - component: {fileID: 1209861805}
   - component: {fileID: 1209861807}
   - component: {fileID: 1209861806}
+  - component: {fileID: 1209861808}
   m_Layer: 5
   m_Name: LobbyPanel
   m_TagString: Untagged
@@ -1991,6 +1969,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1209861804}
   m_CullTransparentMesh: 1
+--- !u!114 &1209861808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1209861804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe0b8d0ad6be7e4439b10ef189995628, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LobbyUI
+  addressInput: {fileID: 622825121}
+  hostButton: {fileID: 338414339}
+  joinButton: {fileID: 168386904}
+  stopButton: {fileID: 595344102}
+  readyButton: {fileID: 250039903}
+  readyButtonLabel: {fileID: 2077928516}
+  startButton: {fileID: 1842203331}
+  statusLabel: {fileID: 2062052422}
 --- !u!1 &1455579175
 GameObject:
   m_ObjectHideFlags: 0
@@ -2409,7 +2407,7 @@ MonoBehaviour:
   evaluationMethod: 0
   evaluationInterval: 3
   timeInterpolationGui: 0
-  gameManagerPrefab: {fileID: 8564782054247896552, guid: 91b7837854124c44e8397ed799487002, type: 3}
+  matchServerPrefab: {fileID: 8564782054247896552, guid: 91b7837854124c44e8397ed799487002, type: 3}
 --- !u!114 &1663083091
 MonoBehaviour:
   m_ObjectHideFlags: 0

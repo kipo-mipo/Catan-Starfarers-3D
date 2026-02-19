@@ -14,7 +14,8 @@ GameObject:
   - component: {fileID: 7304376245090045290}
   - component: {fileID: 4335571108464624743}
   - component: {fileID: 6730968283457170087}
-  - component: {fileID: 6740522853542262630}
+  - component: {fileID: 8626037341704583371}
+  - component: {fileID: 3382403053182999174}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -168,7 +169,7 @@ MonoBehaviour:
   rotationSensitivity: 0.01
   positionPrecision: 0.01
   scalePrecision: 0.01
---- !u!114 &6740522853542262630
+--- !u!114 &8626037341704583371
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -177,10 +178,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 3304169062327092627}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93d73bfba87c44546824fd13fad8da73, type: 3}
+  m_Script: {fileID: 11500000, guid: f4a5b6b915798b54893e6c992082493d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::LobbyPlayer
+  m_EditorClassIdentifier: Assembly-CSharp::LobbyParticipant
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
   isReady: 0
+--- !u!114 &3382403053182999174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3304169062327092627}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c51ed5db07472a429e0fce6653456bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MatchParticipant
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
