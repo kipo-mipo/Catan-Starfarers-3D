@@ -18,9 +18,20 @@ namespace MyAssets.Client.Runtime
 
             foreach (var s in asset.slots)
             {
-                var neighbors = new System.Collections.Generic.List<NodeId>();
-                foreach (var id in s.neighborNodes) neighbors.Add(new NodeId(id));
-                def.Slots.Add(new BoardDefinitionData.Slot(new SlotId(s.id), ToNum(s.position), neighbors));
+                var neighbors = new System.Collections.Generic.List<MyAssets.GameCore.NodeId>();
+                foreach (var id in s.neighborNodes) neighbors.Add(new MyAssets.GameCore.NodeId(id));
+
+                // TEMP DEFAULTS until you add these fields to your BoardDefinitionAsset:
+                var star = MyAssets.GameCore.StarRating.One;
+                var orientation = MyAssets.GameCore.SlotOrientation.Up;
+
+                def.Slots.Add(new MyAssets.GameCore.BoardDefinitionData.Slot(
+                    new MyAssets.GameCore.SlotId(s.id),
+                    ToNum(s.position),
+                    star,
+                    orientation,
+                    neighbors
+                ));
             }
 
             foreach (var id in asset.startingSlotIds)
@@ -29,6 +40,8 @@ namespace MyAssets.Client.Runtime
             return def;
         }
 
-        private static Vector3 ToNum(UnityEngine.Vector3 v) => new Vector3(v.x, v.y, v.z);
+        private static System.Numerics.Vector3 ToNum(UnityEngine.Vector3 v)
+            => new System.Numerics.Vector3(v.x, v.y, v.z);
+
     }
 }

@@ -68,7 +68,7 @@ namespace MyAssets.Net
             {
                 MatchStartedEvent ms => new CoreEventMessage { EventType = EventTypes.MatchStarted, A = ms.Seed },
                 ShipMovedEvent sm => new CoreEventMessage { EventType = EventTypes.ShipMoved, A = sm.Player.Value, B = sm.Ship.Value, C = sm.From.Value, D = sm.To.Value },
-                SectorRevealedEvent sr => new CoreEventMessage { EventType = EventTypes.SectorRevealed, A = sr.Slot.Value, B = sr.Tile.Value, C = (int)sr.Type },
+                SectorRevealedEvent sr => new CoreEventMessage { EventType = EventTypes.SectorRevealed, A = sr.Slot.Value, B = sr.Piece.Value, C = sr.Rotation },
                 ActionRejectedEvent r => new CoreEventMessage { EventType = EventTypes.Rejected /* string later */ },
                 _ => new CoreEventMessage { EventType = EventTypes.Rejected }
             };

@@ -1,30 +1,16 @@
 using UnityEngine;
-using Mirror;
-using MyAssets.Net;
+using MyAssets.Client.Net;
 
 namespace MyAssets.Client.UI
 {
     public sealed class LobbyUI : MonoBehaviour
     {
-        public void Host()
-        {
-            if (NetworkManager.singleton != null)
-                NetworkManager.singleton.StartHost();
-        }
+        public void Host() => NetService.Bridge?.StartHost();
 
-        public void Client(string address)
-        {
-            if (NetworkManager.singleton != null)
-            {
-                NetworkManager.singleton.networkAddress = address;
-                NetworkManager.singleton.StartClient();
-            }
-        }
+        public void Client(string address) => NetService.Bridge?.StartClient(address);
 
-        public void StartMatch(int seed)
-        {
-            if (NetworkClient.active)
-                NetworkClient.Send(new StartMatchRequest { Seed = seed });
-        }
+        public void Disconnect() => NetService.Bridge?.Disconnect();
+
+        public void StartMatch(int seed) => NetService.Bridge?.RequestStartMatch(seed);
     }
 }

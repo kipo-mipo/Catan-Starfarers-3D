@@ -2,7 +2,15 @@ using System.Collections.Generic;
 
 namespace MyAssets.GameCore
 {
-    public readonly record struct SectorPieceId(int Value);
+    public readonly struct SectorPieceId : System.IEquatable<SectorPieceId>
+    {
+        public readonly int Value;
+        public SectorPieceId(int value) => Value = value;
+        public bool Equals(SectorPieceId other) => Value == other.Value;
+        public override bool Equals(object obj) => obj is SectorPieceId other && Equals(other);
+        public override int GetHashCode() => Value;
+        public override string ToString() => Value.ToString();
+    }
 
     public enum SectorPieceType { Empty, Trade, Planetary, StarterPlanetary }
 

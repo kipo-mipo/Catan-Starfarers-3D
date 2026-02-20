@@ -15,10 +15,9 @@ namespace MyAssets.GameCore
             switch (action)
             {
                 case StartMatchAction start:
-                    // Setup begins; you can spawn initial ships here later.
                     _state.Phase = MatchPhase.Setup;
                     ev.Add(new MatchStartedEvent(start.Seed));
-                    RevealFromAllShips(ev); // optional
+                    RevealFromAllShips(ev);
                     return ev;
 
                 case MoveShipAction move:
@@ -41,7 +40,6 @@ namespace MyAssets.GameCore
                     return ev;
 
                 case EndTurnAction:
-                    // stub
                     return ev;
 
                 default:
@@ -64,9 +62,23 @@ namespace MyAssets.GameCore
                 if (!slot.NeighborNodes.Contains(node)) continue;
 
                 _state.RevealedSlots.Add(slot.Id);
-                var tileId = _state.SlotToTile[slot.Id];
-                var tile = _state.Tiles.Tiles[tileId];
-                ev.Add(new SectorRevealedEvent(slot.Id, tileId, tile.Type));
+
+                // Sector reveal is authoritative; mapping to a concrete piece is handled by setup.
+                // During transition we fall back to using TileId as the piece id if SlotToPiece isn't populated.
+                if (!_state.SlotToPiece.TryGetValue(slot.Id, out var pieceId))
+                {
+                    var tileId = _state.SlotToTile[slot.Id];
+                    pieceId = new SectorPieceId(tileId.Value);
+                    _state.SlotToPiece[slot.Id] = pieceId;
+                }
+
+                if (!_state.SlotToRotation.TryGetValue(slot.Id, out var rotation))
+                {
+                    rotation = 0;
+                    _state.SlotToRotation[slot.Id] = rotation;
+                }
+
+                ev.Add(new SectorRevealedEvent(slot.Id, pieceId, rotation));
             }
         }
 

@@ -1,0 +1,8 @@
+{
+  "name": "MyAssets.Net",
+  "references": [
+    "MyAssets.GameCore",
+    "Mirror"
+  ],
+  "autoReferenced": true
+}

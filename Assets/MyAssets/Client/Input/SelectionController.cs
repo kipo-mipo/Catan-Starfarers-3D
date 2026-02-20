@@ -1,7 +1,5 @@
-using MyAssets.GameCore;
-using MyAssets.Net;
 using UnityEngine;
-using Mirror;
+using MyAssets.Client.Net;
 
 namespace MyAssets.Client.Input
 {
@@ -11,33 +9,20 @@ namespace MyAssets.Client.Input
         public int localPlayerId = 0;
         public int selectedShipId = 0;
 
-        private NodeId? _from;
+        private int? _fromNode;
 
-        // Hook this from a NodeView click later.
         public void OnNodeClicked(int nodeId)
         {
-            var n = new NodeId(nodeId);
-
-            if (_from is null)
+            if (_fromNode is null)
             {
-                _from = n;
+                _fromNode = nodeId;
                 Debug.Log($"From selected: {nodeId}");
                 return;
             }
 
-            var req = new MoveShipRequest
-            {
-                Player = localPlayerId,
-                Ship = selectedShipId,
-                FromNode = _from.Value.Value,
-                ToNode = n.Value
-            };
-
-            if (NetworkClient.active)
-                NetworkClient.Send(req);
-
-            Debug.Log($"MoveShipRequest sent: {_from.Value.Value} -> {n.Value}");
-            _from = null;
+            NetService.Bridge?.RequestMoveShip(localPlayerId, selectedShipId, _fromNode.Value, nodeId);
+            Debug.Log($"MoveShip requested: {_fromNode.Value} -> {nodeId}");
+            _fromNode = null;
         }
     }
 }

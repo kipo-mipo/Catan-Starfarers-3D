@@ -1,0 +1,46 @@
+4 player:
+
+(/ means two rolls)
+starting planets
+A- 4, 8, 11
+B- 8, 10, 3/12
+C- 3, 6, 5
+D- 2/11, 6, 9
+
+one star
+triangle- 3, 4, 4, 11, 12
+square- 2, 5, 5, 6, 9
+hexagon- 10, 10, (req 4 cannons), (req 5 cannons), (req 3 tradepods)
+
+two star
+triangle- 3, 4, 11
+square- 5, 8, 9
+hexagon- 10, (req 6 cannons), (req 4 tradepods)
+
+hex reserve tokens- 3, 9, 10, 11, 11
+
+
+5-6 player:
+
+starting planets
+switch out the following 4 player tokens for these
+A- 11 for 10/11
+B- 3/12 for 9/12
+C- 3 for 3/4
+D- 2/11 for 2/5
+
+one star
+add the following to pool
+
+triangle- 3
+square- 8
+hexagon- (req 2 friendship cards)
+
+two star
+add the following to pool
+
+triangle- 4
+square- 12
+hexagon- (req 3 friendship cards)
+
+hex reserve tokens- 5, 10

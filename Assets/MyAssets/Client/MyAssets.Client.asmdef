@@ -1,0 +1,7 @@
+{
+  "name": "MyAssets.Client",
+  "references": [
+    "MyAssets.GameCore"
+  ],
+  "autoReferenced": true
+}
