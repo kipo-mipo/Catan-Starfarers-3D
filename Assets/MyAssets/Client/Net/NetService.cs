@@ -1,8 +1,13 @@
+using System;
 using UnityEngine;
 using MyAssets.GameCore.Net;
 
 namespace MyAssets.Client.Net
 {
+    /// <summary>
+    /// Simple service-locator for the active INetBridge.
+    /// Robust against Unity-destroyed objects and duplicate scene loads.
+    /// </summary>
     public static class NetService
     {
         private static INetBridge _bridge;
@@ -11,20 +16,32 @@ namespace MyAssets.Client.Net
         {
             get
             {
-                if (_bridge != null) return _bridge;
+                // UnityEngine.Object null check works only for Unity objects.
+                if (_bridge is UnityEngine.Object uo && uo == null)
+                    _bridge = null;
 
-                foreach (var mb in Object.FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None))
-                {
-                    if (mb is INetBridge b)
-                    {
-                        _bridge = b;
-                        return _bridge;
-                    }
-                }
+                if (_bridge == null)
+                    _bridge = FindBridgeInScene();
 
-                Debug.LogError("INetBridge not found. Add MirrorNetBridge to a bootstrap prefab in the scene.");
-                return null;
+                return _bridge;
             }
+            set
+            {
+                _bridge = value;
+            }
+        }
+
+        private static INetBridge FindBridgeInScene()
+        {
+            // Find first enabled MonoBehaviour that implements INetBridge.
+            // Works even if the concrete type lives in a different asmdef.
+            var behaviours = UnityEngine.Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None);
+            foreach (var b in behaviours)
+            {
+                if (!b.isActiveAndEnabled) continue;
+                if (b is INetBridge bridge) return bridge;
+            }
+            return null;
         }
     }
 }

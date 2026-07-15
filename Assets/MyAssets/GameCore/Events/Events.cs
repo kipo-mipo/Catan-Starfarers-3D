@@ -14,10 +14,127 @@ namespace MyAssets.GameCore
     public readonly struct ActionRejectedEvent : IGameEvent, System.IEquatable<ActionRejectedEvent>
     {
         public readonly string Reason;
-        public ActionRejectedEvent(string reason) => Reason = reason;
-        public bool Equals(ActionRejectedEvent other) => string.Equals(Reason, other.Reason);
+        public ActionRejectedEvent(string reason) => Reason = reason ?? "Rejected";
+        public bool Equals(ActionRejectedEvent other) => Reason == other.Reason;
         public override bool Equals(object obj) => obj is ActionRejectedEvent other && Equals(other);
-        public override int GetHashCode() => Reason == null ? 0 : Reason.GetHashCode();
+        public override int GetHashCode() => Reason?.GetHashCode() ?? 0;
+    }
+
+    public readonly struct SetupStepChangedEvent : IGameEvent, System.IEquatable<SetupStepChangedEvent>
+    {
+        public readonly SetupRound Round;
+        public readonly PlayerId CurrentPlayer;
+
+        public SetupStepChangedEvent(SetupRound round, PlayerId currentPlayer)
+        {
+            Round = round;
+            CurrentPlayer = currentPlayer;
+        }
+
+        public bool Equals(SetupStepChangedEvent other) => Round == other.Round && CurrentPlayer.Equals(other.CurrentPlayer);
+        public override bool Equals(object obj) => obj is SetupStepChangedEvent other && Equals(other);
+        public override int GetHashCode() => ((int)Round * 397) ^ CurrentPlayer.Value;
+    }
+
+    public readonly struct ColonyPlacedEvent : IGameEvent, System.IEquatable<ColonyPlacedEvent>
+    {
+        public readonly PlayerId Player;
+        public readonly NodeId Node;
+
+        public ColonyPlacedEvent(PlayerId player, NodeId node)
+        {
+            Player = player;
+            Node = node;
+        }
+
+        public bool Equals(ColonyPlacedEvent other) => Player.Equals(other.Player) && Node.Equals(other.Node);
+        public override bool Equals(object obj) => obj is ColonyPlacedEvent other && Equals(other);
+        public override int GetHashCode() => (Player.Value * 397) ^ Node.Value;
+    }
+
+    public readonly struct SpaceportPlacedEvent : IGameEvent, System.IEquatable<SpaceportPlacedEvent>
+    {
+        public readonly PlayerId Player;
+        public readonly NodeId Node;
+
+        public SpaceportPlacedEvent(PlayerId player, NodeId node)
+        {
+            Player = player;
+            Node = node;
+        }
+
+        public bool Equals(SpaceportPlacedEvent other) => Player.Equals(other.Player) && Node.Equals(other.Node);
+        public override bool Equals(object obj) => obj is SpaceportPlacedEvent other && Equals(other);
+        public override int GetHashCode() => (Player.Value * 397) ^ Node.Value;
+    }
+
+    public readonly struct SetupUpgradeGrantedEvent : IGameEvent, System.IEquatable<SetupUpgradeGrantedEvent>
+    {
+        public readonly PlayerId Player;
+        public readonly UpgradeType Upgrade;
+
+        public SetupUpgradeGrantedEvent(PlayerId player, UpgradeType upgrade)
+        {
+            Player = player;
+            Upgrade = upgrade;
+        }
+
+        public bool Equals(SetupUpgradeGrantedEvent other) => Player.Equals(other.Player) && Upgrade == other.Upgrade;
+        public override bool Equals(object obj) => obj is SetupUpgradeGrantedEvent other && Equals(other);
+        public override int GetHashCode() => (Player.Value * 397) ^ (int)Upgrade;
+    }
+
+    public readonly struct StartingResourcesGrantedEvent : IGameEvent, System.IEquatable<StartingResourcesGrantedEvent>
+    {
+        public readonly PlayerId Player;
+        public readonly int Count;
+
+        public StartingResourcesGrantedEvent(PlayerId player, int count)
+        {
+            Player = player;
+            Count = count;
+        }
+
+        public bool Equals(StartingResourcesGrantedEvent other) => Player.Equals(other.Player) && Count == other.Count;
+        public override bool Equals(object obj) => obj is StartingResourcesGrantedEvent other && Equals(other);
+        public override int GetHashCode() => (Player.Value * 397) ^ Count;
+    }
+
+    public readonly struct FameMedalGrantedEvent : IGameEvent, System.IEquatable<FameMedalGrantedEvent>
+    {
+        public readonly PlayerId Player;
+        public FameMedalGrantedEvent(PlayerId player) => Player = player;
+        public bool Equals(FameMedalGrantedEvent other) => Player.Equals(other.Player);
+        public override bool Equals(object obj) => obj is FameMedalGrantedEvent other && Equals(other);
+        public override int GetHashCode() => Player.Value;
+    }
+
+    public readonly struct ShipPlacedEvent : IGameEvent, System.IEquatable<ShipPlacedEvent>
+    {
+        public readonly PlayerId Player;
+        public readonly ShipId Ship;
+        public readonly NodeId Node;
+
+        public ShipPlacedEvent(PlayerId player, ShipId ship, NodeId node)
+        {
+            Player = player;
+            Ship = ship;
+            Node = node;
+        }
+
+        public bool Equals(ShipPlacedEvent other) => Player.Equals(other.Player) && Ship.Equals(other.Ship) && Node.Equals(other.Node);
+        public override bool Equals(object obj) => obj is ShipPlacedEvent other && Equals(other);
+        public override int GetHashCode() => ((Player.Value * 397) ^ Ship.Value * 397) ^ Node.Value;
+    }
+
+    public readonly struct SetupCompletedEvent : IGameEvent, System.IEquatable<SetupCompletedEvent>
+    {
+        public readonly PlayerId FirstPlayer;
+        public SetupCompletedEvent(PlayerId firstPlayer) => FirstPlayer = firstPlayer;
+
+        public bool Equals(SetupCompletedEvent other) => FirstPlayer.Equals(other.FirstPlayer);
+        public override bool Equals(object obj) => obj is SetupCompletedEvent other && Equals(other);
+        public override int GetHashCode() => FirstPlayer.Value;
     }
 
     public readonly struct ShipMovedEvent : IGameEvent, System.IEquatable<ShipMovedEvent>
@@ -29,25 +146,17 @@ namespace MyAssets.GameCore
 
         public ShipMovedEvent(PlayerId player, ShipId ship, NodeId from, NodeId to)
         {
-            Player = player; Ship = ship; From = from; To = to;
+            Player = player;
+            Ship = ship;
+            From = from;
+            To = to;
         }
 
         public bool Equals(ShipMovedEvent other) =>
             Player.Equals(other.Player) && Ship.Equals(other.Ship) && From.Equals(other.From) && To.Equals(other.To);
 
         public override bool Equals(object obj) => obj is ShipMovedEvent other && Equals(other);
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                int h = Player.GetHashCode();
-                h = (h * 397) ^ Ship.GetHashCode();
-                h = (h * 397) ^ From.GetHashCode();
-                h = (h * 397) ^ To.GetHashCode();
-                return h;
-            }
-        }
+        public override int GetHashCode() => ((Player.Value * 397) ^ Ship.Value * 397) ^ (From.Value * 397) ^ To.Value;
     }
 
     public readonly struct SectorRevealedEvent : IGameEvent, System.IEquatable<SectorRevealedEvent>
@@ -58,77 +167,38 @@ namespace MyAssets.GameCore
 
         public SectorRevealedEvent(SlotId slot, SectorPieceId piece, int rotation)
         {
-            Slot = slot; Piece = piece; Rotation = rotation;
+            Slot = slot;
+            Piece = piece;
+            Rotation = rotation;
         }
 
-        public bool Equals(SectorRevealedEvent other) =>
-            Slot.Equals(other.Slot) && Piece.Equals(other.Piece) && Rotation == other.Rotation;
-
+        public bool Equals(SectorRevealedEvent other) => Slot.Equals(other.Slot) && Piece.Equals(other.Piece) && Rotation == other.Rotation;
         public override bool Equals(object obj) => obj is SectorRevealedEvent other && Equals(other);
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                int h = Slot.GetHashCode();
-                h = (h * 397) ^ Piece.GetHashCode();
-                h = (h * 397) ^ Rotation;
-                return h;
-            }
-        }
+        public override int GetHashCode() => ((Slot.Value * 397) ^ Piece.Value * 397) ^ Rotation;
     }
 
     public readonly struct PlanetTokenLockedEvent : IGameEvent, System.IEquatable<PlanetTokenLockedEvent>
     {
         public readonly PlanetInstanceId Planet;
-        public readonly TokenPoolId Pool;
-
-        public PlanetTokenLockedEvent(PlanetInstanceId planet, TokenPoolId pool)
-        {
-            Planet = planet; Pool = pool;
-        }
-
-        public bool Equals(PlanetTokenLockedEvent other) => Planet.Equals(other.Planet) && Pool == other.Pool;
+        public PlanetTokenLockedEvent(PlanetInstanceId planet) => Planet = planet;
+        public bool Equals(PlanetTokenLockedEvent other) => Planet.Equals(other.Planet);
         public override bool Equals(object obj) => obj is PlanetTokenLockedEvent other && Equals(other);
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                return (Planet.GetHashCode() * 397) ^ (int)Pool;
-            }
-        }
+        public override int GetHashCode() => Planet.GetHashCode();
     }
 
     public readonly struct PlanetTokenAssignedEvent : IGameEvent, System.IEquatable<PlanetTokenAssignedEvent>
     {
         public readonly PlanetInstanceId Planet;
-        public readonly TokenPoolId Pool;
         public readonly int TokenId;
-        public readonly int RollA;
-        public readonly int? RollB;
 
-        public PlanetTokenAssignedEvent(PlanetInstanceId planet, TokenPoolId pool, int tokenId, int rollA, int? rollB)
+        public PlanetTokenAssignedEvent(PlanetInstanceId planet, int tokenId)
         {
-            Planet = planet; Pool = pool; TokenId = tokenId; RollA = rollA; RollB = rollB;
+            Planet = planet;
+            TokenId = tokenId;
         }
 
-        public bool Equals(PlanetTokenAssignedEvent other) =>
-            Planet.Equals(other.Planet) && Pool == other.Pool && TokenId == other.TokenId && RollA == other.RollA && RollB == other.RollB;
-
+        public bool Equals(PlanetTokenAssignedEvent other) => Planet.Equals(other.Planet) && TokenId == other.TokenId;
         public override bool Equals(object obj) => obj is PlanetTokenAssignedEvent other && Equals(other);
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                int h = Planet.GetHashCode();
-                h = (h * 397) ^ (int)Pool;
-                h = (h * 397) ^ TokenId;
-                h = (h * 397) ^ RollA;
-                h = (h * 397) ^ (RollB.HasValue ? RollB.Value : 0);
-                return h;
-            }
-        }
+        public override int GetHashCode() => (Planet.GetHashCode() * 397) ^ TokenId;
     }
 }

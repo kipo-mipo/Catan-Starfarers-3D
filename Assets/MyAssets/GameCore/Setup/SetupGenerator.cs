@@ -28,9 +28,11 @@ namespace MyAssets.GameCore
             if (targetSlots.Count != rules.NonStartingSlotsToFill)
                 throw new InvalidOperationException($"Expected {rules.NonStartingSlotsToFill} non-starting slots, got {targetSlots.Count}.");
 
-            // Candidate pieces for random placement (exclude starter pieces)
+            // Candidate pieces for random placement (exclude starter pieces).
+            // FiveSixOnly pieces are expansion add-ons and must never appear in four-player setup.
             var candidates = pieces.Pieces.Values
                 .Where(p => p.Type is SectorPieceType.Planetary or SectorPieceType.Trade or SectorPieceType.Empty)
+                .Where(p => rules.Mode == PlayerCountMode.FiveSix || !p.FiveSixOnly)
                 .ToList();
 
             // Split by type/star

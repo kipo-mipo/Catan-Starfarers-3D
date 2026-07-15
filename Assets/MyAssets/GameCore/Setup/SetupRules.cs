@@ -1,20 +1,25 @@
 namespace MyAssets.GameCore
 {
-    public enum PlayerCountMode { Four, FiveSix }
+    public enum PlayerCountMode
+    {
+        Four,
+        FiveSix
+    }
 
     public sealed class SetupRules
     {
         public PlayerCountMode Mode;
 
-        // Non-starting slots are 15 total minus 4 starters = 11 placements.
-        public int NonStartingSlotsToFill = 11;
+        // Current board layout has 19 sector slots and 4 starting slots.
+        // 19 - 4 = 15 non-starting sector placements.
+        public int NonStartingSlotsToFill = 15;
 
-        // Composition pool sizes (includes the “one extra not used” concept)
+        // Pool sizes include one extra unused piece.
+        // For 15 placed sectors, total pool size should be 16.
         public int PlanetaryPool;
         public int TradePool;
         public int EmptyPool;
 
-        // Star breakdown for each pool
         public int PlanetaryOneStar;
         public int PlanetaryTwoStar;
 
@@ -31,21 +36,40 @@ namespace MyAssets.GameCore
                 return new SetupRules
                 {
                     Mode = mode,
-                    PlanetaryPool = 8, PlanetaryOneStar = 5, PlanetaryTwoStar = 3,
-                    TradePool = 4, TradeOneStar = 2, TradeTwoStar = 2,
-                    EmptyPool = 4, EmptyOneStar = 2, EmptyTwoStar = 2,
-                    NonStartingSlotsToFill = 11
+
+                    PlanetaryPool = 8,
+                    PlanetaryOneStar = 5,
+                    PlanetaryTwoStar = 3,
+
+                    TradePool = 4,
+                    TradeOneStar = 2,
+                    TradeTwoStar = 2,
+
+                    EmptyPool = 4,
+                    EmptyOneStar = 2,
+                    EmptyTwoStar = 2,
+
+                    NonStartingSlotsToFill = 15
                 };
             }
 
-            // 5–6 expansion
             return new SetupRules
             {
                 Mode = mode,
-                PlanetaryPool = 10, PlanetaryOneStar = 6, PlanetaryTwoStar = 4,
-                TradePool = 5, TradeOneStar = 2, TradeTwoStar = 3,
-                EmptyPool = 1, EmptyOneStar = 1, EmptyTwoStar = 0,
-                NonStartingSlotsToFill = 11
+
+                PlanetaryPool = 10,
+                PlanetaryOneStar = 6,
+                PlanetaryTwoStar = 4,
+
+                TradePool = 5,
+                TradeOneStar = 2,
+                TradeTwoStar = 3,
+
+                EmptyPool = 1,
+                EmptyOneStar = 1,
+                EmptyTwoStar = 0,
+
+                NonStartingSlotsToFill = 15
             };
         }
     }

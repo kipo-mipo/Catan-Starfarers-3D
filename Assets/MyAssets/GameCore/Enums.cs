@@ -2,6 +2,20 @@ namespace MyAssets.GameCore
 {
     public enum MatchPhase { Setup, Turn, GameOver }
 
+    public enum SetupRound
+    {
+        FirstColony = 1,
+        SecondColony = 2,
+        ThirdColony = 3,
+        SpaceportShipUpgrade = 4
+    }
+
+    public enum SetupShipType
+    {
+        ColonyShip = 0,
+        TradeShip = 1
+    }
+
     public enum SectorType
     {
         Empty,
@@ -12,12 +26,11 @@ namespace MyAssets.GameCore
     public enum ResourceType
     {
         None,
-        // Add your actual Starfarers resources here
         Ore,
         Carbon,
         Food,
         Goods,
-        Gas,
+        Fuel,
     }
 
     public enum UpgradeType
