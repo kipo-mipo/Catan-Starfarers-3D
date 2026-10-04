@@ -5,13 +5,16 @@
   <Project Path="Mirror.Editor.csproj" />
   <Project Path="Mirror.Examples.csproj" />
   <Project Path="kcp2k.csproj" />
+  <Project Path="MyAssets.Client.csproj" />
+  <Project Path="MyAssets.Net.csproj" />
   <Project Path="Mirror.csproj" />
   <Project Path="SimpleWebTransport.csproj" />
+  <Project Path="MyAssets.GameCore.csproj" />
   <Project Path="Mirror.Authenticators.csproj" />
   <Project Path="Mirror.Transports.csproj" />
   <Project Path="EncryptionTransportEditor.csproj" />
-  <Project Path="Assembly-CSharp.csproj" />
   <Project Path="Telepathy.csproj" />
   <Project Path="Assembly-CSharp-Editor.csproj" />
   <Project Path="Mirror.CompilerSymbols.csproj" />
+  <Project Path="Assembly-CSharp.csproj" />
 </Solution>
