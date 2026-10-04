@@ -1,0 +1,55 @@
+MyAssets.GameCore
+
+Ids.cs (NodeId, LaneId, SlotId, TileId, PlayerId, ShipId)
+
+Board/BoardDefinitionData.cs (pure data structs)
+
+Board/BoardGraph.cs (adjacency from lanes)
+
+Board/SetupDefinition.cs (tile placement mapping)
+
+State/GameState.cs
+
+Phases/MatchPhase.cs (Setup/Turn/GameOver)
+
+Actions/* (StartMatch, PlaceInitialShip, MoveShip, etc.)
+
+Events/* (MatchStarted, SectorRevealed, ShipMoved, etc.)
+
+Engine/GameCoreEngine.cs (Apply action → events)
+
+
+
+MyAssets.Net
+
+Session/SessionState.cs (Lobby/Loading/InMatch/PostMatch)
+
+Server/MatchServer.cs (owns roster + GameCoreEngine)
+
+Server/ServerActionRouter.cs (request → action)
+
+Messages/* (Mirror messages: requests + events)
+
+Scene/SceneCoordinator.cs (server triggers scene load)
+
+
+
+MyAssets.Client
+
+Key rule: GameCore never references any of the Authoring/* types. Only the exporter does.
+
+Authoring/BoardDefinitionAsset.cs (ScriptableObject)
+
+Authoring/TileLibraryAsset.cs
+
+Authoring/SetupAsset.cs
+
+Runtime/BoardDefinitionExporter.cs (SO → GameCore pure data)
+
+BoardView/BoardSpawner.cs (spawns nodes/lanes/sector visuals)
+
+BoardView/Registry.cs (id→view mapping)
+
+UI/LobbyUI.cs, UI/GameUI.cs
+
+Input/SelectionController.cs
