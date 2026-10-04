@@ -1,0 +1,205 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1362822256675705522
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8330569445878612648}
+  - component: {fileID: 6405000350742051924}
+  - component: {fileID: 127008151673247943}
+  - component: {fileID: 6969536336385444363}
+  - component: {fileID: 2183539283342246430}
+  - component: {fileID: 1944729053588205648}
+  - component: {fileID: 4088349407919172470}
+  - component: {fileID: 812924921413735223}
+  - component: {fileID: 5093246966538751517}
+  m_Layer: 0
+  m_Name: NetworkRoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8330569445878612648
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1362822256675705522}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 7.125, y: 2.70329, z: 2.98647}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6405000350742051924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1362822256675705522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b0fecffa3f624585964b0d0eb21b18e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Mirror.Transports::kcp2k.KcpTransport
+  port: 7777
+  DualMode: 1
+  NoDelay: 1
+  Interval: 10
+  Timeout: 10000
+  RecvBufferSize: 7361536
+  SendBufferSize: 7361536
+  FastResend: 2
+  ReceiveWindowSize: 4096
+  SendWindowSize: 4096
+  MaxRetransmit: 40
+  MaximizeSocketBuffers: 1
+  ReliableMaxMessageSize: 297433
+  UnreliableMaxMessageSize: 1194
+  debugLog: 0
+  statisticsGUI: 0
+  statisticsLog: 0
+--- !u!114 &127008151673247943
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1362822256675705522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b0c48f554a05afb4cb9683525ccd7396, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: MyAssets.Net::MyAssets.Net.Bridge.MirrorNetBridge
+  networkManager: {fileID: 6969536336385444363}
+--- !u!114 &6969536336385444363
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1362822256675705522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09d220e3e8a5d2f41bcf149029c3de7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: MyAssets.Net::MyAssets.Net.CustomNetworkManager
+  dontDestroyOnLoad: 1
+  runInBackground: 1
+  headlessStartMode: 0
+  editorAutoStart: 0
+  sendRate: 60
+  offlineScene: Assets/MyAssets/Bootstrap.unity
+  onlineScene: Assets/MyAssets/Game.unity
+  offlineSceneLoadDelay: 0
+  transport: {fileID: 6405000350742051924}
+  networkAddress: localhost
+  maxConnections: 100
+  disconnectInactiveConnections: 0
+  disconnectInactiveTimeout: 60
+  authenticator: {fileID: 0}
+  playerPrefab: {fileID: 0}
+  autoCreatePlayer: 0
+  playerSpawnMethod: 0
+  spawnPrefabs:
+  - {fileID: 4261200814046761037, guid: b54d9dc7f826981419a1d03ce03a87cb, type: 3}
+  exceptionsDisconnect: 1
+  snapshotSettings:
+    bufferTimeMultiplier: 2
+    bufferLimit: 32
+    catchupNegativeThreshold: -1
+    catchupPositiveThreshold: 1
+    catchupSpeed: 0.019999999552965164
+    slowdownSpeed: 0.03999999910593033
+    driftEmaDuration: 1
+    dynamicAdjustment: 1
+    dynamicAdjustmentTolerance: 1
+    deliveryTimeEmaDuration: 2
+  evaluationMethod: 0
+  evaluationInterval: 3
+  timeInterpolationGui: 0
+  matchServerPrefab: {fileID: 4261200814046761037, guid: b54d9dc7f826981419a1d03ce03a87cb, type: 3}
+--- !u!114 &2183539283342246430
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1362822256675705522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 871c2e11ccd03a84cb404954a01f323d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: MyAssets.Client::AutoConnectFlow
+  discovery: {fileID: 1944729053588205648}
+  searchSeconds: 1.25
+  hostJitterMaxSeconds: 0.35
+  receiveTimeoutMs: 250
+  connectTimeoutSeconds: 4
+  defaultPlayerName: Player
+--- !u!114 &1944729053588205648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1362822256675705522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 453f9dd55214a254392855a980112963, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: MyAssets.Client::MyAssets.Client.Net.StarfarersLanDiscovery
+  discoveryPort: 47777
+  probe: STARFARERS_DISCOVER
+  reply: STARFARERS_HOST
+--- !u!114 &4088349407919172470
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1362822256675705522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 014dee14a3a431a489a99cf48b064bad, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: MyAssets.Client::MyAssets.Client.Net.ClientEventReceiver
+--- !u!114 &812924921413735223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1362822256675705522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cbc8a9caf685f314daab306d3242f71d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: MyAssets.Client::MyAssets.Client.Net.ClientSessionModel
+  localPlayerId: 0
+--- !u!114 &5093246966538751517
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1362822256675705522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 280cdf4aebf1cd54195b182b090fd2df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: MyAssets.Client::MyAssets.Client.Input.SelectionController
+  localPlayerId: 0
+  selectedShipId: 0
+  defaultSetupShipType: 0
+  defaultSetupUpgrade: 2
+  session: {fileID: 0}

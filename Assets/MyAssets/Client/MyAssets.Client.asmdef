@@ -1,7 +1,19 @@
 {
-  "name": "MyAssets.Client",
-  "references": [
-    "MyAssets.GameCore"
-  ],
-  "autoReferenced": true
+    "name": "MyAssets.Client",
+    "rootNamespace": "",
+    "references": [
+        "MyAssets.GameCore",
+        "Unity.TextMeshPro",
+        "Unity.TextMeshPro.Editor",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

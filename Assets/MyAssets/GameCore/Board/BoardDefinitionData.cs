@@ -15,9 +15,23 @@ namespace MyAssets.GameCore
         Two = 2
     }
 
+    public enum SectorSlotType
+    {
+        Planet = 0,
+        Trade = 1
+    }
+
     public sealed class BoardDefinitionData
     {
-        public sealed record Node(NodeId Id, Vector3 Position);
+        public sealed record Node(
+            NodeId Id,
+            Vector3 Position,
+            bool IsPlanetSectorSlot = false,
+            bool IsPassable = true,
+            bool IsLandable = true,
+            bool IsInteractable = true,
+            string ObjectName = null
+        );
         public sealed record Lane(LaneId Id, NodeId A, NodeId B);
 
         // A fixed sector location on the board.
@@ -26,6 +40,7 @@ namespace MyAssets.GameCore
             Vector3 Position,
             StarRating Star,
             SlotOrientation Orientation,
+            SectorSlotType Type,
             List<NodeId> NeighborNodes
         );
 

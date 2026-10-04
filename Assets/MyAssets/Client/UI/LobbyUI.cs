@@ -1,16 +1,16 @@
 using UnityEngine;
-using MyAssets.Client.Net;
 
-namespace MyAssets.Client.UI
+public class LobbyUI : MonoBehaviour
 {
-    public sealed class LobbyUI : MonoBehaviour
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
     {
-        public void Host() => NetService.Bridge?.StartHost();
+        
+    }
 
-        public void Client(string address) => NetService.Bridge?.StartClient(address);
-
-        public void Disconnect() => NetService.Bridge?.Disconnect();
-
-        public void StartMatch(int seed) => NetService.Bridge?.RequestStartMatch(seed);
+    // Update is called once per frame
+    void Update()
+    {
+        
     }
 }
